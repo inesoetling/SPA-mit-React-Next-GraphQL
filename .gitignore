@@ -89,3 +89,10 @@ coverage
 /src/generated/prisma
 
 /src/generated/prisma
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
