@@ -1,6 +1,8 @@
+import Container from 'react-bootstrap/Container';
+
 export default function SearchPage() {
   return (
-    <div>
+    <Container className="py-4">
       <h1>Search Books</h1>
 
       <div
@@ -12,7 +14,8 @@ export default function SearchPage() {
         }}
       >
         {/* hier kommt das formular */}
+        Formularbereich
       </div>
-    </div>
+    </Container>
   );
 }
