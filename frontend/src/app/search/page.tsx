@@ -7,10 +7,19 @@ export default function SearchPage() {
     <Container className="py-4">
       <h1>Search Books</h1>
 
+      {/* Formularbereich */}
       <Card className="mt-4">
         <CardBody>
           {/* hier kommt das formular */}
           Formularbereich
+        </CardBody>
+      </Card>
+
+      {/* Ergebnisbereich */}
+      <Card className="mt-4">
+        <CardBody>
+          {/* hier kommen die Suchergebnisse */}
+          Ergebnisbereich
         </CardBody>
       </Card>
     </Container>
