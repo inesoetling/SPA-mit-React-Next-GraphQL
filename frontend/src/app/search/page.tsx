@@ -1,3 +1,5 @@
+import Card from 'react-bootstrap/Card';
+import CardBody from 'react-bootstrap/CardBody';
 import Container from 'react-bootstrap/Container';
 
 export default function SearchPage() {
@@ -5,17 +7,12 @@ export default function SearchPage() {
     <Container className="py-4">
       <h1>Search Books</h1>
 
-      <div
-        style={{
-          border: '1px solid #ccc',
-          padding: '16px',
-          borderRadius: '8px',
-          marginTop: '16px',
-        }}
-      >
-        {/* hier kommt das formular */}
-        Formularbereich
-      </div>
+      <Card className="mt-4">
+        <CardBody>
+          {/* hier kommt das formular */}
+          Formularbereich
+        </CardBody>
+      </Card>
     </Container>
   );
 }
