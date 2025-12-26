@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, Container, Form } from 'react-bootstrap';
+import { Card, Col, Container, Form, Row } from 'react-bootstrap';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
@@ -30,8 +30,30 @@ export default function SearchPage() {
       <Card className="mt-4">
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            {/* hier kommt das formular */}
-            Formularbereich
+            <Row className="g-3">
+              <Col md={6} xs={12}>
+                <Form.Group controlId="searchTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Search by title"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6} xs={12}>
+                <Form.Group controlId="searchIsbn">
+                  <Form.Label>ISBN</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={isbn}
+                    onChange={(e) => setIsbn(e.target.value)}
+                    placeholder="Search by ISBN"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
           </Form>
         </Card.Body>
       </Card>
