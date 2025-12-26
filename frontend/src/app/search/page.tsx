@@ -1,5 +1,6 @@
+'use client';
+
 import Card from 'react-bootstrap/Card';
-import CardBody from 'react-bootstrap/CardBody';
 import Container from 'react-bootstrap/Container';
 
 export default function SearchPage() {
@@ -7,20 +8,20 @@ export default function SearchPage() {
     <Container className="py-4">
       <h1>Search Books</h1>
 
-      {/* Formularbereich */}
+      {/* Formularbereic */}
       <Card className="mt-4">
-        <CardBody>
+        <Card.Body>
           {/* hier kommt das formular */}
           Formularbereich
-        </CardBody>
+        </Card.Body>
       </Card>
 
       {/* Ergebnisbereich */}
       <Card className="mt-4">
-        <CardBody>
+        <Card.Body>
           {/* hier kommen die Suchergebnisse */}
           Ergebnisbereich
-        </CardBody>
+        </Card.Body>
       </Card>
     </Container>
   );
