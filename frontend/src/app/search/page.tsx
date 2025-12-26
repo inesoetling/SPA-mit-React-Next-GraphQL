@@ -81,21 +81,43 @@ export default function SearchPage() {
                   </Form.Select>
                 </Form.Group>
               </Col>
+
               <Col md={6} xs={12}>
                 <Form.Group controlId="searchAvailability">
                   <Form.Label>Availability</Form.Label>
-                  <Form.Select
-                    value={availability}
-                    onChange={(e) =>
-                      setAvailability(e.target.value as Availability)
-                    }
-                  >
-                    <option value="ALL">All</option>
-                    <option value="AVAILABLE">Available</option>
-                    <option value="UNAVAILABLE">Unavailable</option>
-                  </Form.Select>
+
+                  <div>
+                    <Form.Check
+                      inline
+                      type="radio"
+                      id="availability-all"
+                      name="availability"
+                      label="All"
+                      checked={availability === 'ALL'}
+                      onChange={() => setAvailability('ALL')}
+                    />
+                    <Form.Check
+                      inline
+                      type="radio"
+                      id="availability-available"
+                      name="availability"
+                      label="Available"
+                      checked={availability === 'AVAILABLE'}
+                      onChange={() => setAvailability('AVAILABLE')}
+                    />
+                    <Form.Check
+                      inline
+                      type="radio"
+                      id="availability-unavailable"
+                      name="availability"
+                      label="Unavailable"
+                      checked={availability === 'UNAVAILABLE'}
+                      onChange={() => setAvailability('UNAVAILABLE')}
+                    />
+                  </div>
                 </Form.Group>
               </Col>
+
               <Col xs={12}>
                 <Form.Group controlId="searchRatings">
                   <Form.Label>Ratings</Form.Label>
