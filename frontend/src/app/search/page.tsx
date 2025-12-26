@@ -38,7 +38,7 @@ export default function SearchPage() {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Search by title"
+                    placeholder="Search by Title"
                   />
                 </Form.Group>
               </Col>
@@ -51,6 +51,37 @@ export default function SearchPage() {
                     onChange={(e) => setIsbn(e.target.value)}
                     placeholder="Search by ISBN"
                   />
+                </Form.Group>
+              </Col>
+              <Col md={6} xs={12}>
+                <Form.Group controlId="searchBookType">
+                  <Form.Label>Book Type</Form.Label>
+                  <Form.Select
+                    value={bookType}
+                    onChange={(e) =>
+                      setBookType(e.target.value as BookType | 'ALL')
+                    }
+                  >
+                    <option value="ALL">All Types</option>
+                    <option value="HARDCOVER">Hardcover</option>
+                    <option value="PAPERBACK">Paperback</option>
+                    <option value="EPUB">ePub</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6} xs={12}>
+                <Form.Group controlId="searchAvailability">
+                  <Form.Label>Availability</Form.Label>
+                  <Form.Select
+                    value={availability}
+                    onChange={(e) =>
+                      setAvailability(e.target.value as Availability)
+                    }
+                  >
+                    <option value="ALL">All</option>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="UNAVAILABLE">Unavailable</option>
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>
