@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
+import { Card, Container, Form } from 'react-bootstrap';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
@@ -19,6 +18,10 @@ export default function SearchPage() {
   const [rating2, setRating2] = useState(false);
   const [rating1, setRating1] = useState(false);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <Container className="py-4">
       <h1>Search Books</h1>
@@ -26,8 +29,10 @@ export default function SearchPage() {
       {/* Formularbereich */}
       <Card className="mt-4">
         <Card.Body>
-          {/* hier kommt das formular */}
-          Formularbereich
+          <Form onSubmit={handleSubmit}>
+            {/* hier kommt das formular */}
+            Formularbereich
+          </Form>
         </Card.Body>
       </Card>
 
