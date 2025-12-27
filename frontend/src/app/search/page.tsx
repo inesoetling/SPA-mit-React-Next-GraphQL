@@ -77,7 +77,7 @@ export default function SearchPage() {
                     <option value="ALL">All Types</option>
                     <option value="HARDCOVER">Hardcover</option>
                     <option value="PAPERBACK">Paperback</option>
-                    <option value="EPUB">ePub</option>
+                    <option value="EPUB">EPUB</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -120,14 +120,14 @@ export default function SearchPage() {
 
               <Col xs={12}>
                 <Form.Group controlId="searchRatings">
-                  <Form.Label>Ratings</Form.Label>
+                  <Form.Label>Rating Filter</Form.Label>
 
                   <div>
                     <Form.Check
                       inline
                       type="checkbox"
                       id="rating-5"
-                      label="5"
+                      label="5 ⭐"
                       checked={rating5}
                       onChange={(e) => setRating5(e.target.checked)}
                     />
@@ -135,7 +135,7 @@ export default function SearchPage() {
                       inline
                       type="checkbox"
                       id="rating-4"
-                      label="4"
+                      label="4 ⭐"
                       checked={rating4}
                       onChange={(e) => setRating4(e.target.checked)}
                     />
@@ -143,7 +143,7 @@ export default function SearchPage() {
                       inline
                       type="checkbox"
                       id="rating-3"
-                      label="3"
+                      label="3 ⭐"
                       checked={rating3}
                       onChange={(e) => setRating3(e.target.checked)}
                     />
@@ -151,7 +151,7 @@ export default function SearchPage() {
                       inline
                       type="checkbox"
                       id="rating-2"
-                      label="2"
+                      label="2 ⭐"
                       checked={rating2}
                       onChange={(e) => setRating2(e.target.checked)}
                     />
@@ -159,7 +159,7 @@ export default function SearchPage() {
                       inline
                       type="checkbox"
                       id="rating-1"
-                      label="1"
+                      label="1 ⭐"
                       checked={rating1}
                       onChange={(e) => setRating1(e.target.checked)}
                     />
@@ -170,11 +170,11 @@ export default function SearchPage() {
               <Col xs={12}>
                 <div className="d-flex gap-2">
                   <Button type="submit" variant="primary">
-                    Search
+                    🔍 Search
                   </Button>
                   <Button
                     type="button"
-                    variant="outline-secondary"
+                    variant="secondary"
                     onClick={handleReset}
                   >
                     Reset
