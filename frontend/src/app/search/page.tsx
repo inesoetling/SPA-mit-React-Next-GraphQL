@@ -267,12 +267,18 @@ export default function SearchPage() {
       {/* Ergebnisbereich */}
       <Card className="mt-4">
         <Card.Body>
-          {/* hier kommen die Suchergebnisse */}
-          <ul>
+          <Row className="g-3">
             {filteredBooks.map((book) => (
-              <li key={book.id}>{book.title}</li>
+              <Col key={book.id} xs={12} md={6} lg={4}>
+                <Card className="h-100">
+                  <Card.Body>
+                    <Card.Title>{book.title}</Card.Title>
+                    <div className="text-muted">ISBN: {book.isbn}</div>
+                  </Card.Body>
+                </Card>
+              </Col>
             ))}
-          </ul>
+          </Row>
         </Card.Body>
       </Card>
     </Container>
