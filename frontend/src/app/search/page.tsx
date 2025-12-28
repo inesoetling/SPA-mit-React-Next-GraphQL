@@ -316,7 +316,12 @@ export default function SearchPage() {
                       </Col>
                     </Row>
 
-                    <Card.Title>{book.title}</Card.Title>
+                    <Card.Title className="mb-2">{book.title}</Card.Title>
+                    {book.subtitle && (
+                      <Card.Subtitle className="mb-2 text-muted">
+                        {book.subtitle}
+                      </Card.Subtitle>
+                    )}
 
                     <Card.Text className="text-muted">
                       ISBN: {book.isbn}
