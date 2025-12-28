@@ -6,6 +6,82 @@ import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
 
+type Book = {
+  id: string;
+  isbn: string;
+  title: string;
+  subtitle?: string;
+  rating: number;
+  bookType: BookType;
+  price: number;
+  discount?: number;
+  available: boolean;
+};
+const DUMMY_BOOKS: Book[] = [
+  {
+    id: '1',
+    isbn: '978-0-123456-78-9',
+    title: 'Modern Web Development',
+    subtitle: 'A Comprehensive Guide',
+    rating: 5,
+    bookType: 'HARDCOVER',
+    price: 49.99,
+    discount: 10,
+    available: true,
+  },
+  {
+    id: '2',
+    isbn: '978-0-987654-32-1',
+    title: 'React Patterns and Best Practices',
+    subtitle: 'Building Scalable Applications',
+    rating: 4,
+    bookType: 'EPUB',
+    price: 29.99,
+    available: true,
+  },
+  {
+    id: '3',
+    isbn: '978-0-456789-12-3',
+    title: 'GraphQL in Action',
+    rating: 4,
+    bookType: 'PAPERBACK',
+    price: 39.99,
+    discount: 15,
+    available: false,
+  },
+  {
+    id: '4',
+    isbn: '978-0-321654-98-7',
+    title: 'TypeScript Mastery',
+    subtitle: 'From Beginner to Expert',
+    rating: 5,
+    bookType: 'HARDCOVER',
+    price: 54.99,
+    discount: 20,
+    available: true,
+  },
+  {
+    id: '5',
+    isbn: '978-0-789123-45-6',
+    title: 'CSS Grid and Flexbox',
+    rating: 3,
+    bookType: 'EPUB',
+    price: 24.99,
+    available: true,
+  },
+  {
+    id: '6',
+    isbn: '978-0-159753-84-2',
+    title: 'Node.js Backend Development',
+    subtitle: 'Server-Side JavaScript',
+    rating: 4,
+    bookType: 'PAPERBACK',
+    price: 44.99,
+    discount: 5,
+    available: true,
+  },
+];
+
 export default function SearchPage() {
   const [title, setTitle] = useState('');
   const [isbn, setIsbn] = useState('');
@@ -33,6 +109,8 @@ export default function SearchPage() {
     setRating2(false);
     setRating1(false);
   };
+
+  const filteredBooks = DUMMY_BOOKS;
 
   return (
     <Container className="py-4">
@@ -190,7 +268,11 @@ export default function SearchPage() {
       <Card className="mt-4">
         <Card.Body>
           {/* hier kommen die Suchergebnisse */}
-          Ergebnisbereich
+          <ul>
+            {filteredBooks.map((book) => (
+              <li key={book.id}>{book.title}</li>
+            ))}
+          </ul>
         </Card.Body>
       </Card>
     </Container>
