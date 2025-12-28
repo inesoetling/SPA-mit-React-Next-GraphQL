@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Form from 'react-bootstrap/Form';
-import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
 import Button from 'react-bootstrap/Button';
 //https://www.w3schools.com/react/react_forms.asp
 const LoginForm = () => {
