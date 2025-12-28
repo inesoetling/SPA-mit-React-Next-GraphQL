@@ -300,19 +300,28 @@ export default function SearchPage() {
           <Row className="g-3">
             {filteredBooks.map((book) => (
               <Col key={book.id} xs={12} md={6} lg={4}>
-                <Card className="h-100">
+                <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }}>
                   <Card.Body>
-                    <Badge
-                      bg={getBookTypeBadge(book.bookType)}
-                      className="mb-2"
-                    >
-                      {book.bookType}
-                    </Badge>
-                    <div className="mb-2">{renderStars(book.rating)}</div>
+                    <Row className="mb-2">
+                      <Col xs="auto">
+                        <Badge bg={getBookTypeBadge(book.bookType)}>
+                          {book.bookType}
+                        </Badge>
+                      </Col>
+
+                      <Col className="text-end">
+                        <Card.Text className="mb-0">
+                          {renderStars(book.rating)}
+                        </Card.Text>
+                      </Col>
+                    </Row>
+
                     <Card.Title>{book.title}</Card.Title>
+
                     <Card.Text className="text-muted">
                       ISBN: {book.isbn}
                     </Card.Text>
+
                     <Stack
                       direction="horizontal"
                       className="justify-content-between"
