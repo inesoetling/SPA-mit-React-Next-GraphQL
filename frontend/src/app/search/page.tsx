@@ -9,7 +9,6 @@ import {
   Container,
   Form,
   Row,
-  Stack,
 } from 'react-bootstrap';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
@@ -327,15 +326,33 @@ export default function SearchPage() {
                       ISBN: {book.isbn}
                     </Card.Text>
 
-                    <Stack
-                      direction="horizontal"
-                      className="justify-content-between"
-                    >
-                      <span /> {/* links frei lassen oder später Preis o.ä. */}
-                      <Badge bg={book.available ? 'success' : 'danger'}>
-                        {book.available ? 'Available' : 'Not Available'}
-                      </Badge>
-                    </Stack>
+                    <Row className="mt-3 align-items-center">
+                      <Col>
+                        {book.discount && book.discount > 0 ? (
+                          <>
+                            <span className="text-decoration-line-through text-muted me-2">
+                              €{book.price.toFixed(2)}
+                            </span>
+                            <span className="fw-bold text-success">
+                              €
+                              {(book.price * (1 - book.discount / 100)).toFixed(
+                                2,
+                              )}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="fw-bold">
+                            €{book.price.toFixed(2)}
+                          </span>
+                        )}
+                      </Col>
+
+                      <Col xs="auto">
+                        <Badge bg={book.available ? 'success' : 'danger'}>
+                          {book.available ? 'Available' : 'Not Available'}
+                        </Badge>
+                      </Col>
+                    </Row>
                   </Card.Body>
                 </Card>
               </Col>
