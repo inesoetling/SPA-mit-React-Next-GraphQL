@@ -1,7 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Stack,
+} from 'react-bootstrap';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
@@ -108,6 +117,23 @@ export default function SearchPage() {
     setRating3(false);
     setRating2(false);
     setRating1(false);
+  };
+
+  // Sterne anzeigen
+  const renderStars = (rating: number) => '⭐'.repeat(rating);
+
+  // Badge-Farbe für BookType
+  const getBookTypeBadge = (type: BookType) => {
+    switch (type) {
+      case 'EPUB':
+        return 'primary';
+      case 'HARDCOVER':
+        return 'success';
+      case 'PAPERBACK':
+        return 'info';
+      default:
+        return 'secondary';
+    }
   };
 
   const filteredBooks = DUMMY_BOOKS;
@@ -267,13 +293,35 @@ export default function SearchPage() {
       {/* Ergebnisbereich */}
       <Card className="mt-4">
         <Card.Body>
+          <p className="text-muted mb-3">
+            Showing 1-{filteredBooks.length} of {filteredBooks.length} results
+          </p>
+
           <Row className="g-3">
             {filteredBooks.map((book) => (
               <Col key={book.id} xs={12} md={6} lg={4}>
                 <Card className="h-100">
                   <Card.Body>
+                    <Badge
+                      bg={getBookTypeBadge(book.bookType)}
+                      className="mb-2"
+                    >
+                      {book.bookType}
+                    </Badge>
+                    <div className="mb-2">{renderStars(book.rating)}</div>
                     <Card.Title>{book.title}</Card.Title>
-                    <div className="text-muted">ISBN: {book.isbn}</div>
+                    <Card.Text className="text-muted">
+                      ISBN: {book.isbn}
+                    </Card.Text>
+                    <Stack
+                      direction="horizontal"
+                      className="justify-content-between"
+                    >
+                      <span /> {/* links frei lassen oder später Preis o.ä. */}
+                      <Badge bg={book.available ? 'success' : 'danger'}>
+                        {book.available ? 'Available' : 'Not Available'}
+                      </Badge>
+                    </Stack>
                   </Card.Body>
                 </Card>
               </Col>
