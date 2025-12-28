@@ -40,3 +40,13 @@ a {
     color-scheme: dark;
   }
 }
+
+.centered-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
