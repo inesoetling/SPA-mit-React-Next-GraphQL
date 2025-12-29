@@ -6,11 +6,17 @@ import { useState } from 'react';
 import { Alert, Button, Card, Container, Form } from 'react-bootstrap';
 
 export default function CreateBookPage() {
+  // Pflichtfelder
   const [isbn, setIsbn] = useState('');
   const [titel, setTitel] = useState('');
   const [rating, setRating] = useState(5);
   const [art, setArt] = useState('HARDCOVER');
   const [preis, setPreis] = useState('');
+
+  // NEU: Optionale Felder
+  const [untertitel, setUntertitel] = useState('');
+  const [rabatt, setRabatt] = useState('');
+
   const [error, setError] = useState('');
 
   const [createBook, { loading }] = useMutation(CREATE_BOOK);
@@ -19,7 +25,7 @@ export default function CreateBookPage() {
     e.preventDefault();
 
     if (!isbn || !titel || !preis) {
-      setError('Bitte alle Felder ausfüllen');
+      setError('Bitte alle Pflichtfelder ausfüllen');
       return;
     }
 
@@ -31,11 +37,23 @@ export default function CreateBookPage() {
             rating,
             art,
             preis: parseFloat(preis),
-            titel: { titel },
+            rabatt: rabatt ? parseFloat(rabatt) : undefined,
+            titel: {
+              titel,
+              untertitel: untertitel || undefined,
+            },
           },
         },
       });
       alert('Buch angelegt!');
+      // Reset
+      setIsbn('');
+      setTitel('');
+      setUntertitel('');
+      setRating(5);
+      setArt('HARDCOVER');
+      setPreis('');
+      setRabatt('');
     } catch {
       setError('Fehler beim Anlegen');
     }
@@ -51,7 +69,7 @@ export default function CreateBookPage() {
 
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>ISBN</Form.Label>
+              <Form.Label>ISBN *</Form.Label>
               <Form.Control
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
@@ -59,15 +77,25 @@ export default function CreateBookPage() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Titel</Form.Label>
+              <Form.Label>Titel *</Form.Label>
               <Form.Control
                 value={titel}
                 onChange={(e) => setTitel(e.target.value)}
               />
             </Form.Group>
 
+            {/* NEU */}
             <Form.Group className="mb-3">
-              <Form.Label>Rating</Form.Label>
+              <Form.Label>Untertitel</Form.Label>
+              <Form.Control
+                value={untertitel}
+                onChange={(e) => setUntertitel(e.target.value)}
+                placeholder="Optional"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Rating *</Form.Label>
               <Form.Select
                 value={rating}
                 onChange={(e) => setRating(parseInt(e.target.value))}
@@ -81,7 +109,7 @@ export default function CreateBookPage() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Art</Form.Label>
+              <Form.Label>Art *</Form.Label>
               <Form.Select value={art} onChange={(e) => setArt(e.target.value)}>
                 <option value="HARDCOVER">Hardcover</option>
                 <option value="EPUB">EPUB</option>
@@ -90,12 +118,24 @@ export default function CreateBookPage() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Preis</Form.Label>
+              <Form.Label>Preis *</Form.Label>
               <Form.Control
                 type="number"
                 step="0.01"
                 value={preis}
                 onChange={(e) => setPreis(e.target.value)}
+              />
+            </Form.Group>
+
+            {/* NEU */}
+            <Form.Group className="mb-3">
+              <Form.Label>Rabatt (%)</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.01"
+                value={rabatt}
+                onChange={(e) => setRabatt(e.target.value)}
+                placeholder="Optional, z.B. 10"
               />
             </Form.Group>
 
