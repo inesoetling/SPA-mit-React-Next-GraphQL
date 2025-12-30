@@ -3,7 +3,15 @@
 import { CREATE_BOOK } from '@/graphql/mutations';
 import { useMutation } from '@apollo/client/react';
 import { useState } from 'react';
-import { Alert, Button, Card, Container, Form } from 'react-bootstrap';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+} from 'react-bootstrap';
 
 export default function CreateBookPage() {
   // Pflichtfelder
@@ -21,12 +29,14 @@ export default function CreateBookPage() {
   const [homepage, setHomepage] = useState('');
 
   const [error, setError] = useState('');
+  const [, setSuccess] = useState(false);
 
   const [createBook, { loading }] = useMutation(CREATE_BOOK);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess(false);
 
     // Validierung
     if (!isbn || !titel || !preis) {
@@ -79,74 +89,132 @@ export default function CreateBookPage() {
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>ISBN *</Form.Label>
-              <Form.Control
-                value={isbn}
-                onChange={(e) => setIsbn(e.target.value)}
-              />
-            </Form.Group>
+            <Card.Title className="mb-3">Grundinformationen</Card.Title>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Titel *</Form.Label>
-              <Form.Control
-                value={titel}
-                onChange={(e) => setTitel(e.target.value)}
-              />
-            </Form.Group>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>ISBN *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="978-0-123456-78-9"
+                    value={isbn}
+                    onChange={(e) => setIsbn(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Untertitel</Form.Label>
-              <Form.Control
-                value={untertitel}
-                onChange={(e) => setUntertitel(e.target.value)}
-                placeholder="Optional"
-              />
-            </Form.Group>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Titel *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter book title"
+                    value={titel}
+                    onChange={(e) => setTitel(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Rating *</Form.Label>
-              <Form.Select
-                value={rating}
-                onChange={(e) => setRating(parseInt(e.target.value))}
-              >
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1</option>
-              </Form.Select>
-            </Form.Group>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Untertitel</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter subtitle (optional)"
+                    value={untertitel}
+                    onChange={(e) => setUntertitel(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Art *</Form.Label>
-              <Form.Select value={art} onChange={(e) => setArt(e.target.value)}>
-                <option value="HARDCOVER">Hardcover</option>
-                <option value="EPUB">EPUB</option>
-                <option value="PAPERBACK">Paperback</option>
-              </Form.Select>
-            </Form.Group>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Art *</Form.Label>
+                  <Form.Select
+                    value={art}
+                    onChange={(e) => setArt(e.target.value)}
+                  >
+                    <option value="HARDCOVER">Hardcover</option>
+                    <option value="EPUB">EPUB</option>
+                    <option value="PAPERBACK">Paperback</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Preis *</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                value={preis}
-                onChange={(e) => setPreis(e.target.value)}
-              />
-            </Form.Group>
+            <Row>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Rating (1-5) *</Form.Label>
+                  <Form.Select
+                    value={rating}
+                    onChange={(e) => setRating(parseInt(e.target.value))}
+                  >
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Bad</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Rabatt (%)</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                value={rabatt}
-                onChange={(e) => setRabatt(e.target.value)}
-                placeholder="Optional, z.B. 10"
-              />
-            </Form.Group>
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Preis *</Form.Label>
+                  <Form.Control
+                    type="number"
+                    step="0.01"
+                    placeholder="29.99"
+                    value={preis}
+                    onChange={(e) => setPreis(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Rabatt (%)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    placeholder="10"
+                    value={rabatt}
+                    onChange={(e) => setRabatt(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Datum</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={datum}
+                    onChange={(e) => setDatum(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Homepage</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={homepage}
+                    onChange={(e) => setHomepage(e.target.value)}
+                    placeholder="https://example.com"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Form.Group className="mb-3">
               <Form.Check
@@ -154,25 +222,6 @@ export default function CreateBookPage() {
                 label="Lieferbar"
                 checked={lieferbar}
                 onChange={(e) => setLieferbar(e.target.checked)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Datum</Form.Label>
-              <Form.Control
-                type="date"
-                value={datum}
-                onChange={(e) => setDatum(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Homepage</Form.Label>
-              <Form.Control
-                type="url"
-                value={homepage}
-                onChange={(e) => setHomepage(e.target.value)}
-                placeholder="https://example.com"
               />
             </Form.Group>
 
