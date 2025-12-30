@@ -8,6 +8,7 @@ import {
   Col,
   Container,
   Form,
+  Pagination,
   Row,
 } from 'react-bootstrap';
 
@@ -369,6 +370,43 @@ export default function SearchPage() {
               </Col>
             ))}
           </Row>
+
+          {/* Pagination */}
+          <div className="d-flex justify-content-center mt-4">
+            <Pagination>
+              <Pagination.Prev
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              />
+              {[
+                ...Array(
+                  Math.ceil(filteredBooks.length / resultsPerPage),
+                ).keys(),
+              ].map((page) => (
+                <Pagination.Item
+                  key={page + 1}
+                  active={page + 1 === currentPage}
+                  onClick={() => setCurrentPage(page + 1)}
+                >
+                  {page + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(
+                      prev + 1,
+                      Math.ceil(filteredBooks.length / resultsPerPage),
+                    ),
+                  )
+                }
+                disabled={
+                  currentPage ===
+                  Math.ceil(filteredBooks.length / resultsPerPage)
+                }
+              />
+            </Pagination>
+          </div>
         </Card.Body>
       </Card>
     </Container>
