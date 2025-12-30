@@ -107,6 +107,7 @@ export default function SearchPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setCurrentPage(1);
   };
 
   const handleReset = () => {
@@ -121,6 +122,14 @@ export default function SearchPage() {
     setRating1(false);
     setCurrentPage(1);
   };
+
+  const ratingsSelected = [
+    rating5 ? 5 : null,
+    rating4 ? 4 : null,
+    rating3 ? 3 : null,
+    rating2 ? 2 : null,
+    rating1 ? 1 : null,
+  ].filter((r): r is number => r !== null);
 
   // Sterne anzeigen
   const renderStars = (rating: number) => '⭐'.repeat(rating);
@@ -139,7 +148,36 @@ export default function SearchPage() {
     }
   };
 
-  const filteredBooks = DUMMY_BOOKS;
+  const filteredBooks = DUMMY_BOOKS.filter((book) => {
+    if (
+      title.trim() &&
+      !book.title.toLowerCase().includes(title.trim().toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (isbn.trim() && !book.isbn.includes(isbn.trim())) {
+      return false;
+    }
+
+    if (bookType !== 'ALL' && book.bookType !== bookType) {
+      return false;
+    }
+
+    if (availability === 'AVAILABLE' && !book.available) {
+      return false;
+    }
+
+    if (availability === 'UNAVAILABLE' && book.available) {
+      return false;
+    }
+
+    if (ratingsSelected.length > 0 && !ratingsSelected.includes(book.rating)) {
+      return false;
+    }
+
+    return true;
+  });
 
   const startIndex = (currentPage - 1) * resultsPerPage;
   const paginatedBooks = filteredBooks.slice(
