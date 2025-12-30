@@ -96,6 +96,7 @@ export default function SearchPage() {
   const [isbn, setIsbn] = useState('');
   const [bookType, setBookType] = useState<BookType | 'ALL'>('ALL');
   const [availability, setAvailability] = useState<Availability>('ALL');
+  const [, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 6;
 
@@ -108,6 +109,12 @@ export default function SearchPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
+    setIsLoading(true);
+
+    // Simuliere eine Ladezeit
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   const handleReset = () => {
