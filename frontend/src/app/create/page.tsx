@@ -13,9 +13,12 @@ export default function CreateBookPage() {
   const [art, setArt] = useState('HARDCOVER');
   const [preis, setPreis] = useState('');
 
-  // NEU: Optionale Felder
+  // Optionale Felder
   const [untertitel, setUntertitel] = useState('');
   const [rabatt, setRabatt] = useState('');
+  const [lieferbar, setLieferbar] = useState(false);
+  const [datum, setDatum] = useState('');
+  const [homepage, setHomepage] = useState('');
 
   const [error, setError] = useState('');
 
@@ -23,7 +26,9 @@ export default function CreateBookPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
 
+    // Validierung
     if (!isbn || !titel || !preis) {
       setError('Bitte alle Pflichtfelder ausfüllen');
       return;
@@ -38,6 +43,9 @@ export default function CreateBookPage() {
             art,
             preis: parseFloat(preis),
             rabatt: rabatt ? parseFloat(rabatt) : undefined,
+            lieferbar,
+            datum: datum || undefined,
+            homepage: homepage || undefined,
             titel: {
               titel,
               untertitel: untertitel || undefined,
@@ -54,6 +62,9 @@ export default function CreateBookPage() {
       setArt('HARDCOVER');
       setPreis('');
       setRabatt('');
+      setLieferbar(false);
+      setDatum('');
+      setHomepage('');
     } catch {
       setError('Fehler beim Anlegen');
     }
@@ -84,7 +95,6 @@ export default function CreateBookPage() {
               />
             </Form.Group>
 
-            {/* NEU */}
             <Form.Group className="mb-3">
               <Form.Label>Untertitel</Form.Label>
               <Form.Control
@@ -127,7 +137,6 @@ export default function CreateBookPage() {
               />
             </Form.Group>
 
-            {/* NEU */}
             <Form.Group className="mb-3">
               <Form.Label>Rabatt (%)</Form.Label>
               <Form.Control
@@ -136,6 +145,34 @@ export default function CreateBookPage() {
                 value={rabatt}
                 onChange={(e) => setRabatt(e.target.value)}
                 placeholder="Optional, z.B. 10"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="Lieferbar"
+                checked={lieferbar}
+                onChange={(e) => setLieferbar(e.target.checked)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Datum</Form.Label>
+              <Form.Control
+                type="date"
+                value={datum}
+                onChange={(e) => setDatum(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Homepage</Form.Label>
+              <Form.Control
+                type="url"
+                value={homepage}
+                onChange={(e) => setHomepage(e.target.value)}
+                placeholder="https://example.com"
               />
             </Form.Group>
 
