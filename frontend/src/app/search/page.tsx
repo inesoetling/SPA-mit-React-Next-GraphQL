@@ -95,6 +95,8 @@ export default function SearchPage() {
   const [isbn, setIsbn] = useState('');
   const [bookType, setBookType] = useState<BookType | 'ALL'>('ALL');
   const [availability, setAvailability] = useState<Availability>('ALL');
+  const [currentPage, setCurrentPage] = useState(1);
+  const resultsPerPage = 6;
 
   const [rating5, setRating5] = useState(false);
   const [rating4, setRating4] = useState(false);
@@ -116,6 +118,7 @@ export default function SearchPage() {
     setRating3(false);
     setRating2(false);
     setRating1(false);
+    setCurrentPage(1);
   };
 
   // Sterne anzeigen
@@ -136,6 +139,12 @@ export default function SearchPage() {
   };
 
   const filteredBooks = DUMMY_BOOKS;
+
+  const startIndex = (currentPage - 1) * resultsPerPage;
+  const paginatedBooks = filteredBooks.slice(
+    startIndex,
+    startIndex + resultsPerPage,
+  );
 
   return (
     <Container className="py-4">
@@ -293,11 +302,13 @@ export default function SearchPage() {
       <Card className="mt-4">
         <Card.Body>
           <p className="text-muted mb-3">
-            Showing 1-{filteredBooks.length} of {filteredBooks.length} results
+            Showing {startIndex + 1}-
+            {Math.min(startIndex + resultsPerPage, filteredBooks.length)} of{' '}
+            {filteredBooks.length} results
           </p>
 
           <Row className="g-3">
-            {filteredBooks.map((book) => (
+            {paginatedBooks.map((book) => (
               <Col key={book.id} xs={12} md={6} lg={4}>
                 <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }}>
                   <Card.Body>
