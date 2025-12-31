@@ -29,7 +29,7 @@ export default function CreateBookPage() {
   const [homepage, setHomepage] = useState('');
 
   const [error, setError] = useState('');
-  const [, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const [createBook, { loading }] = useMutation(CREATE_BOOK);
 
@@ -40,30 +40,31 @@ export default function CreateBookPage() {
 
     // Validierung
     if (!isbn || !titel || !preis) {
-      setError('Bitte alle Pflichtfelder ausfüllen');
+      setError('Bitte alle Pflichtfelder (*) ausfüllen');
       return;
     }
 
     try {
-      await createBook({
-        variables: {
-          input: {
-            isbn,
-            rating,
-            art,
-            preis: parseFloat(preis),
-            rabatt: rabatt ? parseFloat(rabatt) : undefined,
-            lieferbar,
-            datum: datum || undefined,
-            homepage: homepage || undefined,
-            titel: {
-              titel,
-              untertitel: untertitel || undefined,
-            },
-          },
+      const input = {
+        isbn,
+        rating: parseInt(rating.toString()),
+        art,
+        preis: parseFloat(preis),
+        rabatt: rabatt ? parseFloat(rabatt) : undefined,
+        lieferbar,
+        datum: datum || undefined,
+        homepage: homepage || undefined,
+        schlagwoerter: [],
+        titel: {
+          titel,
+          untertitel: untertitel || undefined,
         },
-      });
-      alert('Buch angelegt!');
+        abbildungen: [],
+      };
+
+      await createBook({ variables: { input } });
+
+      setSuccess(true);
       // Reset
       setIsbn('');
       setTitel('');
@@ -75,8 +76,10 @@ export default function CreateBookPage() {
       setLieferbar(false);
       setDatum('');
       setHomepage('');
-    } catch {
-      setError('Fehler beim Anlegen');
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Fehler beim Anlegen des Buchs',
+      );
     }
   };
 
@@ -86,7 +89,14 @@ export default function CreateBookPage() {
 
       <Card>
         <Card.Body>
-          {error && <Alert variant="danger">{error}</Alert>}
+          {error && (
+            <Alert variant="danger" dismissible onClose={() => setError('')}>
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="success">Buch erfolgreich angelegt!</Alert>
+          )}
 
           <Form onSubmit={handleSubmit}>
             <Card.Title className="mb-3">Grundinformationen</Card.Title>
@@ -100,6 +110,7 @@ export default function CreateBookPage() {
                     placeholder="978-0-123456-78-9"
                     value={isbn}
                     onChange={(e) => setIsbn(e.target.value)}
+                    required
                   />
                 </Form.Group>
               </Col>
@@ -109,9 +120,10 @@ export default function CreateBookPage() {
                   <Form.Label>Titel *</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter book title"
+                    placeholder="Buchtitel eingeben"
                     value={titel}
                     onChange={(e) => setTitel(e.target.value)}
+                    required
                   />
                 </Form.Group>
               </Col>
@@ -123,7 +135,7 @@ export default function CreateBookPage() {
                   <Form.Label>Untertitel</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter subtitle (optional)"
+                    placeholder="Untertitel eingeben (optional)"
                     value={untertitel}
                     onChange={(e) => setUntertitel(e.target.value)}
                   />
@@ -171,6 +183,7 @@ export default function CreateBookPage() {
                     placeholder="29.99"
                     value={preis}
                     onChange={(e) => setPreis(e.target.value)}
+                    required
                   />
                 </Form.Group>
               </Col>
@@ -210,13 +223,13 @@ export default function CreateBookPage() {
                     type="url"
                     value={homepage}
                     onChange={(e) => setHomepage(e.target.value)}
-                    placeholder="https://example.com"
+                    placeholder="https://beispiel.com"
                   />
                 </Form.Group>
               </Col>
             </Row>
 
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-4">
               <Form.Check
                 type="checkbox"
                 label="Lieferbar"
@@ -225,9 +238,18 @@ export default function CreateBookPage() {
               />
             </Form.Group>
 
-            <Button type="submit" disabled={loading}>
-              Speichern
-            </Button>
+            <div className="d-flex gap-2">
+              <Button type="submit" variant="primary" disabled={loading}>
+                {loading ? 'Saving...' : 'Speichern'}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => window.history.back()}
+              >
+                Abbrechen
+              </Button>
+            </div>
           </Form>
         </Card.Body>
       </Card>
