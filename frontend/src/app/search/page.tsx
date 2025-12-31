@@ -413,9 +413,9 @@ export default function SearchPage() {
           {!isLoading && filteredBooks.length > 0 && (
             <Row className="g-4">
               {paginatedBooks.map((book) => (
-                <Col md={4} key={book.id}>
-                  <Card>
-                    <Card.Body>
+                <Col md={4} key={book.id} className="d-flex">
+                  <Card className="h-100 w-100">
+                    <Card.Body className="d-flex flex-column">
                       <Row className="mb-2">
                         <Col xs="auto">
                           <Badge bg={getBookTypeBadge(book.bookType)}>
@@ -439,7 +439,7 @@ export default function SearchPage() {
                         ISBN: {book.isbn}
                       </Card.Text>
 
-                      <Row className="mt-3 align-items-center">
+                      <Row className="mt-auto align-items-center">
                         <Col>
                           {book.discount && book.discount > 0 ? (
                             <>
