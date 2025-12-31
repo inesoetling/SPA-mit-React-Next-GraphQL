@@ -12,6 +12,7 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
+import { Search } from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
@@ -334,7 +335,8 @@ export default function SearchPage() {
               <Col xs={12}>
                 <div className="d-flex gap-2">
                   <Button type="submit" variant="primary">
-                    🔍 Search
+                    <Search className="me-2" />
+                    Search
                   </Button>
                   <Button
                     type="button"
