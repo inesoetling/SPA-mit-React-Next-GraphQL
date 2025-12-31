@@ -194,6 +194,10 @@ export default function SearchPage() {
     startIndex + resultsPerPage,
   );
 
+  const totalResults = filteredBooks.length;
+  const showingFrom = totalResults === 0 ? 0 : startIndex + 1;
+  const showingTo = Math.min(startIndex + resultsPerPage, totalResults);
+
   return (
     <Container className="py-4">
       <h1>Search Books</h1>
@@ -347,6 +351,11 @@ export default function SearchPage() {
       </Card>
 
       {/* Ergebnisbereich */}
+
+      <div className="mt-4 text-muted">
+        Showing {showingFrom} to {showingTo} of {totalResults} results
+      </div>
+
       <Card className="mt-4">
         <Card.Body>
           {isLoading && (
