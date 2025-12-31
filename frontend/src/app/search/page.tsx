@@ -12,7 +12,7 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
-import { Search } from 'react-bootstrap-icons';
+import { Search, Star, StarFill } from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
@@ -142,7 +142,17 @@ export default function SearchPage() {
   ].filter((r): r is number => r !== null);
 
   // Sterne anzeigen
-  const renderStars = (rating: number) => '⭐'.repeat(rating);
+  const renderStars = (rating: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        stars.push(<StarFill key={i} className="text-warning" />);
+      } else {
+        stars.push(<Star key={i} className="text-warning" />);
+      }
+    }
+    return stars;
+  };
 
   // Badge-Farbe für BookType
   const getBookTypeBadge = (type: BookType) => {
@@ -292,39 +302,63 @@ export default function SearchPage() {
                       inline
                       type="checkbox"
                       id="rating-5"
-                      label="5 ⭐"
+                      label={
+                        <span>
+                          5 <StarFill className="text-warning ms-1" />
+                        </span>
+                      }
                       checked={rating5}
                       onChange={(e) => setRating5(e.target.checked)}
                     />
+
                     <Form.Check
                       inline
                       type="checkbox"
                       id="rating-4"
-                      label="4 ⭐"
+                      label={
+                        <span>
+                          4 <StarFill className="text-warning ms-1" />
+                        </span>
+                      }
                       checked={rating4}
                       onChange={(e) => setRating4(e.target.checked)}
                     />
+
                     <Form.Check
                       inline
                       type="checkbox"
                       id="rating-3"
-                      label="3 ⭐"
+                      label={
+                        <span>
+                          3 <StarFill className="text-warning ms-1" />
+                        </span>
+                      }
                       checked={rating3}
                       onChange={(e) => setRating3(e.target.checked)}
                     />
+
                     <Form.Check
                       inline
                       type="checkbox"
                       id="rating-2"
-                      label="2 ⭐"
+                      label={
+                        <span>
+                          2 <StarFill className="text-warning ms-1" />
+                        </span>
+                      }
                       checked={rating2}
                       onChange={(e) => setRating2(e.target.checked)}
                     />
+
                     <Form.Check
                       inline
                       type="checkbox"
                       id="rating-1"
-                      label="1 ⭐"
+                      label={
+                        <span>
+                          1 <StarFill className="text-warning ms-1" />
+                        </span>
+                      }
                       checked={rating1}
                       onChange={(e) => setRating1(e.target.checked)}
                     />
@@ -390,9 +424,7 @@ export default function SearchPage() {
                         </Col>
 
                         <Col className="text-end">
-                          <Card.Text className="mb-0">
-                            {renderStars(book.rating)}
-                          </Card.Text>
+                          <div className="mb-0">{renderStars(book.rating)}</div>
                         </Col>
                       </Row>
 
