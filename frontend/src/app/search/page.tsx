@@ -10,6 +10,7 @@ import {
   Form,
   Pagination,
   Row,
+  Spinner,
 } from 'react-bootstrap';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
@@ -96,7 +97,7 @@ export default function SearchPage() {
   const [isbn, setIsbn] = useState('');
   const [bookType, setBookType] = useState<BookType | 'ALL'>('ALL');
   const [availability, setAvailability] = useState<Availability>('ALL');
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 6;
 
@@ -127,6 +128,7 @@ export default function SearchPage() {
     setRating3(false);
     setRating2(false);
     setRating1(false);
+    setIsLoading(false);
     setCurrentPage(1);
   };
 
@@ -347,111 +349,129 @@ export default function SearchPage() {
       {/* Ergebnisbereich */}
       <Card className="mt-4">
         <Card.Body>
-          <p className="text-muted mb-3">
-            Showing {startIndex + 1}-
-            {Math.min(startIndex + resultsPerPage, filteredBooks.length)} of{' '}
-            {filteredBooks.length} results
-          </p>
+          {isLoading && (
+            <div className="d-flex justify-content-center my-4">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          )}
 
-          <Row className="g-3">
-            {paginatedBooks.map((book) => (
-              <Col key={book.id} xs={12} md={6} lg={4}>
-                <Card className="h-100 shadow-sm" style={{ cursor: 'pointer' }}>
-                  <Card.Body>
-                    <Row className="mb-2">
-                      <Col xs="auto">
-                        <Badge bg={getBookTypeBadge(book.bookType)}>
-                          {book.bookType}
-                        </Badge>
-                      </Col>
+          {!isLoading && filteredBooks.length === 0 && (
+            <Card className="text-center py-5">
+              <Card.Body>
+                <h3>No books found</h3>
+                <p className="text-muted">Try adjusting your search filters</p>
+              </Card.Body>
+            </Card>
+          )}
+          {!isLoading && filteredBooks.length > 0 && (
+            <Row className="g-4">
+              {paginatedBooks.map((book) => (
+                <Col md={4} key={book.id}>
+                  <Card>
+                    <Card.Body>
+                      <Row className="mb-2">
+                        <Col xs="auto">
+                          <Badge bg={getBookTypeBadge(book.bookType)}>
+                            {book.bookType}
+                          </Badge>
+                        </Col>
 
-                      <Col className="text-end">
-                        <Card.Text className="mb-0">
-                          {renderStars(book.rating)}
-                        </Card.Text>
-                      </Col>
-                    </Row>
+                        <Col className="text-end">
+                          <Card.Text className="mb-0">
+                            {renderStars(book.rating)}
+                          </Card.Text>
+                        </Col>
+                      </Row>
 
-                    <Card.Title className="mb-2">{book.title}</Card.Title>
-                    {book.subtitle && (
-                      <Card.Subtitle className="mb-2 text-muted">
-                        {book.subtitle}
-                      </Card.Subtitle>
-                    )}
+                      <Card.Title className="mb-2">{book.title}</Card.Title>
+                      {book.subtitle && (
+                        <Card.Subtitle className="mb-2 text-muted">
+                          {book.subtitle}
+                        </Card.Subtitle>
+                      )}
 
-                    <Card.Text className="text-muted">
-                      ISBN: {book.isbn}
-                    </Card.Text>
+                      <Card.Text className="text-muted">
+                        ISBN: {book.isbn}
+                      </Card.Text>
 
-                    <Row className="mt-3 align-items-center">
-                      <Col>
-                        {book.discount && book.discount > 0 ? (
-                          <>
-                            <span className="text-decoration-line-through text-muted me-2">
+                      <Row className="mt-3 align-items-center">
+                        <Col>
+                          {book.discount && book.discount > 0 ? (
+                            <>
+                              <span className="text-decoration-line-through text-muted me-2">
+                                €{book.price.toFixed(2)}
+                              </span>
+                              <span className="fw-bold text-success">
+                                €
+                                {(
+                                  book.price *
+                                  (1 - book.discount / 100)
+                                ).toFixed(2)}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="fw-bold">
                               €{book.price.toFixed(2)}
                             </span>
-                            <span className="fw-bold text-success">
-                              €
-                              {(book.price * (1 - book.discount / 100)).toFixed(
-                                2,
-                              )}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="fw-bold">
-                            €{book.price.toFixed(2)}
-                          </span>
-                        )}
-                      </Col>
+                          )}
+                        </Col>
 
-                      <Col xs="auto">
-                        <Badge bg={book.available ? 'success' : 'danger'}>
-                          {book.available ? 'Available' : 'Not Available'}
-                        </Badge>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+                        <Col xs="auto">
+                          <Badge bg={book.available ? 'success' : 'danger'}>
+                            {book.available ? 'Available' : 'Not Available'}
+                          </Badge>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          )}
 
           {/* Pagination */}
-          <div className="d-flex justify-content-center mt-4">
-            <Pagination>
-              <Pagination.Prev
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              />
-              {[
-                ...Array(
-                  Math.ceil(filteredBooks.length / resultsPerPage),
-                ).keys(),
-              ].map((page) => (
-                <Pagination.Item
-                  key={page + 1}
-                  active={page + 1 === currentPage}
-                  onClick={() => setCurrentPage(page + 1)}
-                >
-                  {page + 1}
-                </Pagination.Item>
-              ))}
-              <Pagination.Next
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    Math.min(
-                      prev + 1,
+          {!isLoading &&
+            Math.ceil(filteredBooks.length / resultsPerPage) > 1 && (
+              <div className="d-flex justify-content-center mt-4">
+                <Pagination>
+                  <Pagination.Prev
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                  />
+                  {[
+                    ...Array(
                       Math.ceil(filteredBooks.length / resultsPerPage),
-                    ),
-                  )
-                }
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredBooks.length / resultsPerPage)
-                }
-              />
-            </Pagination>
-          </div>
+                    ).keys(),
+                  ].map((page) => (
+                    <Pagination.Item
+                      key={page + 1}
+                      active={page + 1 === currentPage}
+                      onClick={() => setCurrentPage(page + 1)}
+                    >
+                      {page + 1}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          Math.ceil(filteredBooks.length / resultsPerPage),
+                        ),
+                      )
+                    }
+                    disabled={
+                      currentPage ===
+                      Math.ceil(filteredBooks.length / resultsPerPage)
+                    }
+                  />
+                </Pagination>
+              </div>
+            )}
         </Card.Body>
       </Card>
     </Container>
