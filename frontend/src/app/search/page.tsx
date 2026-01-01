@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import {
   Badge,
@@ -414,61 +415,68 @@ export default function SearchPage() {
             <Row className="g-4">
               {paginatedBooks.map((book) => (
                 <Col md={4} key={book.id} className="d-flex">
-                  <Card className="h-100 w-100">
-                    <Card.Body className="d-flex flex-column">
-                      <Row className="mb-2">
-                        <Col xs="auto">
-                          <Badge bg={getBookTypeBadge(book.bookType)}>
-                            {book.bookType}
-                          </Badge>
-                        </Col>
+                  <Link
+                    href={`/search/${book.id}`}
+                    className="text-decoration-none text-dark d-block w-100 h-100"
+                  >
+                    <Card className="h-100 w-100" role="button">
+                      <Card.Body className="d-flex flex-column">
+                        <Row className="mb-2">
+                          <Col xs="auto">
+                            <Badge bg={getBookTypeBadge(book.bookType)}>
+                              {book.bookType}
+                            </Badge>
+                          </Col>
 
-                        <Col className="text-end">
-                          <div className="mb-0">{renderStars(book.rating)}</div>
-                        </Col>
-                      </Row>
+                          <Col className="text-end">
+                            <div className="mb-0">
+                              {renderStars(book.rating)}
+                            </div>
+                          </Col>
+                        </Row>
 
-                      <Card.Title className="mb-2">{book.title}</Card.Title>
-                      {book.subtitle && (
-                        <Card.Subtitle className="mb-2 text-muted">
-                          {book.subtitle}
-                        </Card.Subtitle>
-                      )}
+                        <Card.Title className="mb-2">{book.title}</Card.Title>
+                        {book.subtitle && (
+                          <Card.Subtitle className="mb-2 text-muted">
+                            {book.subtitle}
+                          </Card.Subtitle>
+                        )}
 
-                      <Card.Text className="text-muted">
-                        ISBN: {book.isbn}
-                      </Card.Text>
+                        <Card.Text className="text-muted">
+                          ISBN: {book.isbn}
+                        </Card.Text>
 
-                      <Row className="mt-auto align-items-center">
-                        <Col>
-                          {book.discount && book.discount > 0 ? (
-                            <>
-                              <span className="text-decoration-line-through text-muted me-2">
+                        <Row className="mt-auto align-items-center">
+                          <Col>
+                            {book.discount && book.discount > 0 ? (
+                              <>
+                                <span className="text-decoration-line-through text-muted me-2">
+                                  €{book.price.toFixed(2)}
+                                </span>
+                                <span className="fw-bold text-success">
+                                  €
+                                  {(
+                                    book.price *
+                                    (1 - book.discount / 100)
+                                  ).toFixed(2)}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="fw-bold">
                                 €{book.price.toFixed(2)}
                               </span>
-                              <span className="fw-bold text-success">
-                                €
-                                {(
-                                  book.price *
-                                  (1 - book.discount / 100)
-                                ).toFixed(2)}
-                              </span>
-                            </>
-                          ) : (
-                            <span className="fw-bold">
-                              €{book.price.toFixed(2)}
-                            </span>
-                          )}
-                        </Col>
+                            )}
+                          </Col>
 
-                        <Col xs="auto">
-                          <Badge bg={book.available ? 'success' : 'danger'}>
-                            {book.available ? 'Available' : 'Not Available'}
-                          </Badge>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
+                          <Col xs="auto">
+                            <Badge bg={book.available ? 'success' : 'danger'}>
+                              {book.available ? 'Available' : 'Not Available'}
+                            </Badge>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Link>
                 </Col>
               ))}
             </Row>
