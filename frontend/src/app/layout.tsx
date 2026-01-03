@@ -1,7 +1,8 @@
 'use client';
+
+import './globals.css';
 import { apolloClient } from '@/lib/apollo-client';
 import { ApolloProvider } from '@apollo/client/react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function RootLayout({
   children,
