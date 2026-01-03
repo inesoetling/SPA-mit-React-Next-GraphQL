@@ -1,10 +1,15 @@
 import Link from 'next/link';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 
 export default function Home() {
   return (
-    <Container className="py-5 text-center">
+    <Container className="centered-page">
+      <Image src="/BookLogo.png"
+      width={400}
+      height={400}
+      alt="Logo" rounded  />
       <h1>Buch-Verwaltung</h1>
       <p className="lead">Willkommen</p>
       <div className="d-flex gap-3 justify-content-center mt-4">
