@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 //https://www.w3schools.com/react/react_forms.asp
 const LoginForm = () => {
   const [username, setUsername] = useState("");
