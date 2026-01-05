@@ -24,6 +24,7 @@ type Book = {
   available: boolean;
   publicationDate?: string;
   homepage?: string;
+  keywords?: string[];
 };
 
 const DUMMY_BOOKS: Book[] = [
@@ -39,6 +40,7 @@ const DUMMY_BOOKS: Book[] = [
     available: true,
     publicationDate: '2024-01-15',
     homepage: 'https://example.com/modern-web',
+    keywords: ['web development', 'programming', 'javascript'],
   },
   {
     id: '2',
@@ -234,19 +236,63 @@ export default function BookDetailsPage() {
                   </Card.Body>
                 </Card>
               )}
+
+              {book.keywords && book.keywords.length > 0 && (
+                <Card className="bg-light border-0">
+                  <Card.Body>
+                    <h6 className="text-muted mb-3">Keywords</h6>
+                    <div className="d-flex flex-wrap gap-2">
+                      {book.keywords.map((keyword) => (
+                        <Badge
+                          key={keyword}
+                          bg="secondary"
+                          className="px-3 py-2"
+                        >
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
             </Col>
 
             {/* RIGHT ACTIONS */}
             <Col lg={4}>
-              <Card className="bg-light border-0">
+              <Card
+                className="bg-light border-0 sticky-top"
+                style={{ top: '20px' }}
+              >
                 <Card.Body>
-                  <h5 className="mb-3">Actions</h5>
+                  <h5 className="mb-4">Actions</h5>
 
-                  <Link href="/search" className="text-decoration-none">
-                    <Button variant="outline-primary" className="w-100">
-                      Back to Search
+                  <div className="d-grid gap-3">
+                    <Link href="/search" className="text-decoration-none">
+                      <Button
+                        variant="outline-primary"
+                        className="w-100 d-flex align-items-center justify-content-center gap-2"
+                      >
+                        <ArrowLeft />
+                        <span>Back to Search</span>
+                      </Button>
+                    </Link>
+
+                    <Button
+                      variant="primary"
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      disabled
+                    >
+                      <span>Edit Book</span>
                     </Button>
-                  </Link>
+
+                    <Button
+                      variant="danger"
+                      className="d-flex align-items-center justify-content-center gap-2"
+                      disabled
+                    >
+                      <span>Delete Book</span>
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>
