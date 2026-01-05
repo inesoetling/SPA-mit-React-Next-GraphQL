@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Button, Container } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
@@ -78,48 +78,46 @@ export default function BookDetailsPage() {
       </Container>
     );
   }
-
-  const finalPrice =
-    book.discount && book.discount > 0
-      ? book.price * (1 - book.discount / 100)
-      : book.price;
-
-  const formattedDate = book.publicationDate
-    ? new Date(book.publicationDate).toLocaleDateString('de-DE')
-    : '-';
-
   return (
     <Container className="py-4">
-      <h1>{book.title}</h1>
-
-      {book.subtitle && <h3 className="text-muted">{book.subtitle}</h3>}
-
-      <p className="mt-3">
-        <strong>ISBN:</strong> {book.isbn}
-      </p>
-      <p>
-        <strong>Type:</strong> {book.bookType}
-      </p>
-      <p>
-        <strong>Rating:</strong> {book.rating}/5
-      </p>
-      <p>
-        <strong>Publication Date:</strong> {formattedDate}
-      </p>
-      <p>
-        <strong>Price:</strong> €{finalPrice.toFixed(2)}
-      </p>
-      <p>
-        <strong>Status:</strong>{' '}
-        {book.available ? 'Available' : 'Not Available'}
-      </p>
-
-      <Link href="/search" className="text-decoration-none">
-        <Button variant="outline-primary" className="mt-3">
-          <ArrowLeft className="me-2" />
-          Back to Search
-        </Button>
+      <Link
+        href="/search"
+        className="mb-4 p-0 d-inline-flex align-items-center gap-2 text-decoration-none"
+      >
+        <ArrowLeft />
+        <span>Back to Search</span>
       </Link>
+
+      <Card className="shadow-sm">
+        <Card.Body className="p-4">
+          <Row className="g-4">
+            <Col lg={8}>
+              <h1 className="mb-2">{book.title}</h1>
+              {book.subtitle && (
+                <h3 className="text-muted mb-3">{book.subtitle}</h3>
+              )}
+
+              <p className="text-muted mb-0">
+                Book ID: {book.id} • ISBN: {book.isbn}
+              </p>
+            </Col>
+
+            <Col lg={4}>
+              <Card className="bg-light border-0">
+                <Card.Body>
+                  <h5 className="mb-3">Actions</h5>
+
+                  <Link href="/search" className="text-decoration-none">
+                    <Button variant="outline-primary" className="w-100">
+                      Back to Search
+                    </Button>
+                  </Link>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
     </Container>
   );
 }
