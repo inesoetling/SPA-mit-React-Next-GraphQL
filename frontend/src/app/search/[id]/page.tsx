@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Badge, Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { ArrowLeft, Star, StarFill } from 'react-bootstrap-icons';
+import {
+  ArrowLeft,
+  BoxArrowUpRight,
+  Star,
+  StarFill,
+} from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 
@@ -18,6 +23,7 @@ type Book = {
   discount?: number;
   available: boolean;
   publicationDate?: string;
+  homepage?: string;
 };
 
 const DUMMY_BOOKS: Book[] = [
@@ -32,6 +38,7 @@ const DUMMY_BOOKS: Book[] = [
     discount: 10,
     available: true,
     publicationDate: '2024-01-15',
+    homepage: 'https://example.com/modern-web',
   },
   {
     id: '2',
@@ -128,6 +135,7 @@ export default function BookDetailsPage() {
       <Card className="shadow-sm">
         <Card.Body className="p-4">
           <Row className="g-4">
+            {/* LEFT CONTENT */}
             <Col lg={8}>
               <div className="mb-4">
                 <div className="d-flex align-items-start justify-content-between mb-3">
@@ -209,8 +217,26 @@ export default function BookDetailsPage() {
                   </Card>
                 </Col>
               </Row>
+
+              {book.homepage && (
+                <Card className="bg-light border-0 mb-4">
+                  <Card.Body>
+                    <h6 className="text-muted mb-2">Homepage</h6>
+                    <a
+                      href={book.homepage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="d-inline-flex align-items-center gap-2 text-decoration-none"
+                    >
+                      <span>{book.homepage}</span>
+                      <BoxArrowUpRight />
+                    </a>
+                  </Card.Body>
+                </Card>
+              )}
             </Col>
 
+            {/* RIGHT ACTIONS */}
             <Col lg={4}>
               <Card className="bg-light border-0">
                 <Card.Body>
