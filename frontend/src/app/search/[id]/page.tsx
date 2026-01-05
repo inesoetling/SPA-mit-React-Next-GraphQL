@@ -105,6 +105,16 @@ export default function BookDetailsPage() {
       </Container>
     );
   }
+
+  const finalPrice =
+    book.discount && book.discount > 0
+      ? book.price * (1 - book.discount / 100)
+      : book.price;
+
+  const formattedDate = book.publicationDate
+    ? new Date(book.publicationDate).toLocaleDateString('de-DE')
+    : '-';
+
   return (
     <Container className="py-4">
       <Link
@@ -119,23 +129,86 @@ export default function BookDetailsPage() {
         <Card.Body className="p-4">
           <Row className="g-4">
             <Col lg={8}>
-              <div className="d-flex align-items-start justify-content-between mb-3">
-                <div>
-                  <h1 className="mb-2">{book.title}</h1>
-                  {book.subtitle && (
-                    <h3 className="text-muted mb-3">{book.subtitle}</h3>
-                  )}
+              <div className="mb-4">
+                <div className="d-flex align-items-start justify-content-between mb-3">
+                  <div>
+                    <h1 className="mb-2">{book.title}</h1>
+                    {book.subtitle && (
+                      <h3 className="text-muted mb-3">{book.subtitle}</h3>
+                    )}
+                  </div>
+
+                  <Badge bg={getBookTypeBadgeVariant(book.bookType)}>
+                    {book.bookType}
+                  </Badge>
                 </div>
 
-                <Badge bg={getBookTypeBadgeVariant(book.bookType)}>
-                  {book.bookType}
-                </Badge>
+                <div className="d-flex align-items-center gap-3 mb-4">
+                  {renderStars(book.rating)}
+                  <span className="text-muted">({book.rating}/5)</span>
+                </div>
               </div>
 
-              <div className="d-flex align-items-center gap-3 mb-4">
-                {renderStars(book.rating)}
-                <span className="text-muted">({book.rating}/5)</span>
-              </div>
+              <Row className="g-4 mb-4">
+                <Col sm={6}>
+                  <Card className="bg-light border-0 h-100">
+                    <Card.Body>
+                      <h6 className="text-muted mb-2">ISBN</h6>
+                      <p className="mb-0">{book.isbn}</p>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm={6}>
+                  <Card className="bg-light border-0 h-100">
+                    <Card.Body>
+                      <h6 className="text-muted mb-2">Publication Date</h6>
+                      <p className="mb-0">{formattedDate}</p>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm={6}>
+                  <Card className="bg-light border-0 h-100">
+                    <Card.Body>
+                      <h6 className="text-muted mb-2">Price</h6>
+                      <div>
+                        {book.discount && book.discount > 0 ? (
+                          <>
+                            <span className="text-decoration-line-through text-muted me-2">
+                              €{book.price.toFixed(2)}
+                            </span>
+                            <span className="fs-5 fw-bold text-success">
+                              €{finalPrice.toFixed(2)}
+                            </span>
+                            <Badge bg="warning" text="dark" className="ms-2">
+                              {book.discount}% OFF
+                            </Badge>
+                          </>
+                        ) : (
+                          <span className="fs-5 fw-bold">
+                            €{book.price.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm={6}>
+                  <Card className="bg-light border-0 h-100">
+                    <Card.Body>
+                      <h6 className="text-muted mb-2">Availability</h6>
+                      <Badge
+                        bg={book.available ? 'success' : 'danger'}
+                        className="fs-6"
+                      >
+                        {book.available ? 'Available' : 'Not Available'}
+                      </Badge>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
             </Col>
 
             <Col lg={4}>
