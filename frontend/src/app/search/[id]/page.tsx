@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { ArrowLeft } from 'react-bootstrap-icons';
+import { Badge, Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { ArrowLeft, Star, StarFill } from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 
@@ -57,6 +57,33 @@ const DUMMY_BOOKS: Book[] = [
   },
 ];
 
+const getBookTypeBadgeVariant = (type: BookType) => {
+  switch (type) {
+    case 'EPUB':
+      return 'primary';
+    case 'HARDCOVER':
+      return 'success';
+    case 'PAPERBACK':
+      return 'info';
+    default:
+      return 'secondary';
+  }
+};
+
+const renderStars = (rating: number) => {
+  const stars = [];
+
+  for (let i = 1; i <= 5; i += 1) {
+    if (i <= rating) {
+      stars.push(<StarFill key={i} className="text-warning me-1" />);
+    } else {
+      stars.push(<Star key={i} className="text-secondary me-1" />);
+    }
+  }
+
+  return <div className="d-flex">{stars}</div>;
+};
+
 export default function BookDetailsPage() {
   const params = useParams<{ id: string }>();
   const bookId = params.id;
@@ -92,14 +119,23 @@ export default function BookDetailsPage() {
         <Card.Body className="p-4">
           <Row className="g-4">
             <Col lg={8}>
-              <h1 className="mb-2">{book.title}</h1>
-              {book.subtitle && (
-                <h3 className="text-muted mb-3">{book.subtitle}</h3>
-              )}
+              <div className="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                  <h1 className="mb-2">{book.title}</h1>
+                  {book.subtitle && (
+                    <h3 className="text-muted mb-3">{book.subtitle}</h3>
+                  )}
+                </div>
 
-              <p className="text-muted mb-0">
-                Book ID: {book.id} • ISBN: {book.isbn}
-              </p>
+                <Badge bg={getBookTypeBadgeVariant(book.bookType)}>
+                  {book.bookType}
+                </Badge>
+              </div>
+
+              <div className="d-flex align-items-center gap-3 mb-4">
+                {renderStars(book.rating)}
+                <span className="text-muted">({book.rating}/5)</span>
+              </div>
             </Col>
 
             <Col lg={4}>
