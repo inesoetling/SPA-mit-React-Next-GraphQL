@@ -6,8 +6,10 @@ import { Badge, Button, Card, Col, Container, Row } from 'react-bootstrap';
 import {
   ArrowLeft,
   BoxArrowUpRight,
+  PencilSquare,
   Star,
   StarFill,
+  Trash,
 } from 'react-bootstrap-icons';
 
 type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
@@ -81,7 +83,6 @@ const getBookTypeBadgeVariant = (type: BookType) => {
 
 const renderStars = (rating: number) => {
   const stars = [];
-
   for (let i = 1; i <= 5; i += 1) {
     if (i <= rating) {
       stars.push(<StarFill key={i} className="text-warning me-1" />);
@@ -89,7 +90,6 @@ const renderStars = (rating: number) => {
       stars.push(<Star key={i} className="text-secondary me-1" />);
     }
   }
-
   return <div className="d-flex">{stars}</div>;
 };
 
@@ -282,6 +282,7 @@ export default function BookDetailsPage() {
                       className="d-flex align-items-center justify-content-center gap-2"
                       disabled
                     >
+                      <PencilSquare />
                       <span>Edit Book</span>
                     </Button>
 
@@ -290,6 +291,7 @@ export default function BookDetailsPage() {
                       className="d-flex align-items-center justify-content-center gap-2"
                       disabled
                     >
+                      <Trash />
                       <span>Delete Book</span>
                     </Button>
                   </div>
