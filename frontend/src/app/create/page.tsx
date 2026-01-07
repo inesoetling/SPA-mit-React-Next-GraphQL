@@ -2,6 +2,7 @@
 
 import { CREATE_BOOK } from '@/graphql/mutations';
 import { useMutation } from '@apollo/client/react';
+import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import {
   Alert,
@@ -17,6 +18,12 @@ import {
 interface FormErrors {
   [key: string]: string;
 }
+
+const dateToIsoDateTime = (dateStr: string) => {
+  // Fix von "2026-01-07" zu "2026-01-07T00:00:00.000Z" !!
+  if (!dateStr) return undefined;
+  return new Date(`${dateStr}T00:00:00.000Z`).toISOString();
+};
 
 export default function CreateBookPage() {
   // Pflichtfelder
@@ -134,7 +141,8 @@ export default function CreateBookPage() {
         preis: parseFloat(preis),
         rabatt: rabatt ? parseFloat(rabatt) : undefined,
         lieferbar,
-        datum: datum || undefined,
+        // ✅ FIX: Prisma erwartet ISO-8601 DateTime
+        datum: dateToIsoDateTime(datum),
         homepage: homepage.trim() || undefined,
         schlagwoerter: schlagwoerter.length > 0 ? schlagwoerter : undefined,
         titel: {
@@ -194,7 +202,7 @@ export default function CreateBookPage() {
             <h5 className="mb-0">Grundinformationen</h5>
           </Card.Header>
           <Card.Body>
-            <Row>
+            <Row className="g-3">
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="isbn">
                   <Form.Label>
@@ -231,9 +239,7 @@ export default function CreateBookPage() {
                   </Form.Select>
                 </Form.Group>
               </Col>
-            </Row>
 
-            <Row>
               <Col md={12}>
                 <Form.Group className="mb-3" controlId="titel">
                   <Form.Label>
@@ -254,9 +260,7 @@ export default function CreateBookPage() {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-            </Row>
 
-            <Row>
               <Col md={12}>
                 <Form.Group className="mb-3" controlId="untertitel">
                   <Form.Label>Untertitel</Form.Label>
@@ -268,9 +272,7 @@ export default function CreateBookPage() {
                   />
                 </Form.Group>
               </Col>
-            </Row>
 
-            <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="rating">
                   <Form.Label>
@@ -298,7 +300,7 @@ export default function CreateBookPage() {
             <h5 className="mb-0">Preisinformationen</h5>
           </Card.Header>
           <Card.Body>
-            <Row>
+            <Row className="g-3">
               <Col md={4}>
                 <Form.Group className="mb-3" controlId="preis">
                   <Form.Label>
@@ -366,7 +368,7 @@ export default function CreateBookPage() {
             <h5 className="mb-0">Metadaten</h5>
           </Card.Header>
           <Card.Body>
-            <Row>
+            <Row className="g-3">
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="datum">
                   <Form.Label>Datum</Form.Label>
@@ -396,9 +398,7 @@ export default function CreateBookPage() {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-            </Row>
 
-            <Row>
               <Col md={12}>
                 <Form.Group className="mb-3" controlId="schlagwoerter">
                   <Form.Label>Schlagwörter</Form.Label>
@@ -449,8 +449,10 @@ export default function CreateBookPage() {
               size="sm"
               onClick={handleAddImage}
               type="button"
+              className="d-flex align-items-center gap-2"
             >
-              + Abbildung hinzufügen
+              <Plus size={16} />
+              <span>Abbildung hinzufügen</span>
             </Button>
           </Card.Header>
           <Card.Body>
@@ -471,11 +473,13 @@ export default function CreateBookPage() {
                           size="sm"
                           onClick={() => handleRemoveImage(index)}
                           type="button"
+                          className="d-flex align-items-center gap-1"
                         >
-                          Entfernen
+                          <Trash2 size={14} />
+                          <span>Entfernen</span>
                         </Button>
                       </div>
-                      <Row>
+                      <Row className="g-2">
                         <Col md={6}>
                           <Form.Group className="mb-3">
                             <Form.Label>Beschriftung</Form.Label>
@@ -522,16 +526,24 @@ export default function CreateBookPage() {
           </Card.Body>
         </Card>
 
-        <div className="d-flex gap-2 justify-content-end">
+        <div className="d-flex gap-3 justify-content-end">
           <Button
             type="button"
             variant="secondary"
             onClick={() => window.history.back()}
+            className="d-flex align-items-center gap-2"
           >
-            Abbrechen
+            <X size={18} />
+            <span>Abbrechen</span>
           </Button>
-          <Button type="submit" variant="primary" disabled={loading}>
-            {loading ? 'Speichert...' : 'Speichern'}
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={loading}
+            className="d-flex align-items-center gap-2"
+          >
+            <Save size={18} />
+            <span>{loading ? 'Speichert...' : 'Speichern'}</span>
           </Button>
         </div>
       </Form>
