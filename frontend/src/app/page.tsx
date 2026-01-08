@@ -13,11 +13,11 @@ export default function Home() {
       <h1>Buch-Verwaltung</h1>
       <p className="lead">Willkommen</p>
       <div className="d-flex gap-3 justify-content-center mt-4">
-        <Link href="/books">
-          <Button variant="primary">Bücher</Button>
+        <Link href="/search">
+          <Button variant="primary">Suche</Button>
         </Link>
         <Link href="/create">
-          <Button variant="success">Neu</Button>
+          <Button variant="success">Neu anlegen</Button>
         </Link>
         <Link href="/login">
           <Button variant="outline-primary">Login</Button>
