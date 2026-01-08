@@ -1,8 +1,11 @@
 'use client';
 
+import { GET_BOOKS } from '@/graphql/queries';
+import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -21,85 +24,26 @@ type Availability = 'ALL' | 'AVAILABLE' | 'UNAVAILABLE';
 type Book = {
   id: string;
   isbn: string;
-  title: string;
-  subtitle?: string;
+  titel: {
+    titel: string;
+    untertitel?: string;
+  };
   rating: number;
-  bookType: BookType;
-  price: number;
-  discount?: number;
-  available: boolean;
+  art: BookType;
+  preis: number;
+  rabatt?: number;
+  lieferbar: boolean;
 };
-const DUMMY_BOOKS: Book[] = [
-  {
-    id: '1',
-    isbn: '978-0-123456-78-9',
-    title: 'Modern Web Development',
-    subtitle: 'A Comprehensive Guide',
-    rating: 5,
-    bookType: 'HARDCOVER',
-    price: 49.99,
-    discount: 10,
-    available: true,
-  },
-  {
-    id: '2',
-    isbn: '978-0-987654-32-1',
-    title: 'React Patterns and Best Practices',
-    subtitle: 'Building Scalable Applications',
-    rating: 4,
-    bookType: 'EPUB',
-    price: 29.99,
-    available: true,
-  },
-  {
-    id: '3',
-    isbn: '978-0-456789-12-3',
-    title: 'GraphQL in Action',
-    rating: 4,
-    bookType: 'PAPERBACK',
-    price: 39.99,
-    discount: 15,
-    available: false,
-  },
-  {
-    id: '4',
-    isbn: '978-0-321654-98-7',
-    title: 'TypeScript Mastery',
-    subtitle: 'From Beginner to Expert',
-    rating: 5,
-    bookType: 'HARDCOVER',
-    price: 54.99,
-    discount: 20,
-    available: true,
-  },
-  {
-    id: '5',
-    isbn: '978-0-789123-45-6',
-    title: 'CSS Grid and Flexbox',
-    rating: 3,
-    bookType: 'EPUB',
-    price: 24.99,
-    available: true,
-  },
-  {
-    id: '6',
-    isbn: '978-0-159753-84-2',
-    title: 'Node.js Backend Development',
-    subtitle: 'Server-Side JavaScript',
-    rating: 4,
-    bookType: 'PAPERBACK',
-    price: 44.99,
-    discount: 5,
-    available: true,
-  },
-];
+
+interface GetBooksResponse {
+  buecher: Book[];
+}
 
 export default function SearchPage() {
   const [title, setTitle] = useState('');
   const [isbn, setIsbn] = useState('');
   const [bookType, setBookType] = useState<BookType | 'ALL'>('ALL');
   const [availability, setAvailability] = useState<Availability>('ALL');
-  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 6;
 
@@ -109,15 +53,30 @@ export default function SearchPage() {
   const [rating2, setRating2] = useState(false);
   const [rating1, setRating1] = useState(false);
 
+  // GraphQL Query
+  const { loading, error, data, refetch } = useQuery<GetBooksResponse>(
+    GET_BOOKS,
+    {
+      variables: {
+        suchparameter: {
+          titel: title || undefined,
+          isbn: isbn || undefined,
+          art: bookType !== 'ALL' ? bookType : undefined,
+          lieferbar:
+            availability === 'AVAILABLE'
+              ? true
+              : availability === 'UNAVAILABLE'
+                ? false
+                : undefined,
+        },
+      },
+    },
+  );
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    setIsLoading(true);
-
-    // Simuliere eine Ladezeit
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+    refetch();
   };
 
   const handleReset = () => {
@@ -130,8 +89,15 @@ export default function SearchPage() {
     setRating3(false);
     setRating2(false);
     setRating1(false);
-    setIsLoading(false);
     setCurrentPage(1);
+    refetch({
+      suchparameter: {
+        titel: undefined,
+        isbn: undefined,
+        art: undefined,
+        lieferbar: undefined,
+      },
+    });
   };
 
   const ratingsSelected = [
@@ -169,34 +135,14 @@ export default function SearchPage() {
     }
   };
 
-  const filteredBooks = DUMMY_BOOKS.filter((book) => {
-    if (
-      title.trim() &&
-      !book.title.toLowerCase().includes(title.trim().toLowerCase())
-    ) {
-      return false;
-    }
+  // Bücher aus GraphQL Response
+  const books: Book[] = data?.buecher || [];
 
-    if (isbn.trim() && !book.isbn.includes(isbn.trim())) {
-      return false;
-    }
-
-    if (bookType !== 'ALL' && book.bookType !== bookType) {
-      return false;
-    }
-
-    if (availability === 'AVAILABLE' && !book.available) {
-      return false;
-    }
-
-    if (availability === 'UNAVAILABLE' && book.available) {
-      return false;
-    }
-
+  // Rating Filter
+  const filteredBooks = books.filter((book) => {
     if (ratingsSelected.length > 0 && !ratingsSelected.includes(book.rating)) {
       return false;
     }
-
     return true;
   });
 
@@ -387,15 +333,21 @@ export default function SearchPage() {
         </Card.Body>
       </Card>
 
-      {/* Ergebnisbereich */}
+      {/* Error State */}
+      {error && (
+        <Alert variant="danger" className="mt-4">
+          Fehler beim Laden der Bücher: {error.message}
+        </Alert>
+      )}
 
+      {/* Ergebnisbereich */}
       <div className="mt-4 text-muted">
         Showing {showingFrom} to {showingTo} of {totalResults} results
       </div>
 
       <Card className="mt-4">
         <Card.Body>
-          {isLoading && (
+          {loading && (
             <div className="d-flex justify-content-center my-4">
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
@@ -403,7 +355,7 @@ export default function SearchPage() {
             </div>
           )}
 
-          {!isLoading && filteredBooks.length === 0 && (
+          {!loading && filteredBooks.length === 0 && (
             <Card className="text-center py-5">
               <Card.Body>
                 <h3>No books found</h3>
@@ -411,7 +363,7 @@ export default function SearchPage() {
               </Card.Body>
             </Card>
           )}
-          {!isLoading && filteredBooks.length > 0 && (
+          {!loading && filteredBooks.length > 0 && (
             <Row className="g-4">
               {paginatedBooks.map((book) => (
                 <Col md={4} key={book.id} className="d-flex">
@@ -423,8 +375,8 @@ export default function SearchPage() {
                       <Card.Body className="d-flex flex-column">
                         <Row className="mb-2">
                           <Col xs="auto">
-                            <Badge bg={getBookTypeBadge(book.bookType)}>
-                              {book.bookType}
+                            <Badge bg={getBookTypeBadge(book.art)}>
+                              {book.art}
                             </Badge>
                           </Col>
 
@@ -435,10 +387,12 @@ export default function SearchPage() {
                           </Col>
                         </Row>
 
-                        <Card.Title className="mb-2">{book.title}</Card.Title>
-                        {book.subtitle && (
+                        <Card.Title className="mb-2">
+                          {book.titel.titel}
+                        </Card.Title>
+                        {book.titel.untertitel && (
                           <Card.Subtitle className="mb-2 text-muted">
-                            {book.subtitle}
+                            {book.titel.untertitel}
                           </Card.Subtitle>
                         )}
 
@@ -448,29 +402,25 @@ export default function SearchPage() {
 
                         <Row className="mt-auto align-items-center">
                           <Col>
-                            {book.discount && book.discount > 0 ? (
+                            {book.rabatt && book.rabatt > 0 ? (
                               <>
                                 <span className="text-decoration-line-through text-muted me-2">
-                                  €{book.price.toFixed(2)}
+                                  €{book.preis.toFixed(2)}
                                 </span>
                                 <span className="fw-bold text-success">
-                                  €
-                                  {(
-                                    book.price *
-                                    (1 - book.discount / 100)
-                                  ).toFixed(2)}
+                                  €{(book.preis * (1 - book.rabatt)).toFixed(2)}
                                 </span>
                               </>
                             ) : (
                               <span className="fw-bold">
-                                €{book.price.toFixed(2)}
+                                €{book.preis.toFixed(2)}
                               </span>
                             )}
                           </Col>
 
                           <Col xs="auto">
-                            <Badge bg={book.available ? 'success' : 'danger'}>
-                              {book.available ? 'Available' : 'Not Available'}
+                            <Badge bg={book.lieferbar ? 'success' : 'danger'}>
+                              {book.lieferbar ? 'Available' : 'Not Available'}
                             </Badge>
                           </Col>
                         </Row>
@@ -483,46 +433,45 @@ export default function SearchPage() {
           )}
 
           {/* Pagination */}
-          {!isLoading &&
-            Math.ceil(filteredBooks.length / resultsPerPage) > 1 && (
-              <div className="d-flex justify-content-center mt-4">
-                <Pagination>
-                  <Pagination.Prev
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                  />
-                  {[
-                    ...Array(
-                      Math.ceil(filteredBooks.length / resultsPerPage),
-                    ).keys(),
-                  ].map((page) => (
-                    <Pagination.Item
-                      key={page + 1}
-                      active={page + 1 === currentPage}
-                      onClick={() => setCurrentPage(page + 1)}
-                    >
-                      {page + 1}
-                    </Pagination.Item>
-                  ))}
-                  <Pagination.Next
-                    onClick={() =>
-                      setCurrentPage((prev) =>
-                        Math.min(
-                          prev + 1,
-                          Math.ceil(filteredBooks.length / resultsPerPage),
-                        ),
-                      )
-                    }
-                    disabled={
-                      currentPage ===
-                      Math.ceil(filteredBooks.length / resultsPerPage)
-                    }
-                  />
-                </Pagination>
-              </div>
-            )}
+          {!loading && Math.ceil(filteredBooks.length / resultsPerPage) > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <Pagination>
+                <Pagination.Prev
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                />
+                {[
+                  ...Array(
+                    Math.ceil(filteredBooks.length / resultsPerPage),
+                  ).keys(),
+                ].map((page) => (
+                  <Pagination.Item
+                    key={page + 1}
+                    active={page + 1 === currentPage}
+                    onClick={() => setCurrentPage(page + 1)}
+                  >
+                    {page + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(
+                        prev + 1,
+                        Math.ceil(filteredBooks.length / resultsPerPage),
+                      ),
+                    )
+                  }
+                  disabled={
+                    currentPage ===
+                    Math.ceil(filteredBooks.length / resultsPerPage)
+                  }
+                />
+              </Pagination>
+            </div>
+          )}
         </Card.Body>
       </Card>
     </Container>

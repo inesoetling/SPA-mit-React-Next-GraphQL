@@ -1,8 +1,19 @@
 'use client';
 
+import { GET_BOOK_BY_ID } from '@/graphql/queries';
+import { useQuery } from '@apollo/client/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Badge, Button, Card, Col, Container, Row } from 'react-bootstrap';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+  Spinner,
+} from 'react-bootstrap';
 import {
   ArrowLeft,
   BoxArrowUpRight,
@@ -17,56 +28,27 @@ type BookType = 'HARDCOVER' | 'PAPERBACK' | 'EPUB';
 type Book = {
   id: string;
   isbn: string;
-  title: string;
-  subtitle?: string;
+  titel: {
+    titel: string;
+    untertitel?: string;
+  };
   rating: number;
-  bookType: BookType;
-  price: number;
-  discount?: number;
-  available: boolean;
-  publicationDate?: string;
+  art: BookType;
+  preis: number;
+  rabatt?: number;
+  lieferbar: boolean;
+  datum?: string;
   homepage?: string;
-  keywords?: string[];
+  schlagwoerter?: string[];
+  abbildungen?: Array<{
+    beschriftung: string;
+    contentType: string;
+  }>;
 };
 
-const DUMMY_BOOKS: Book[] = [
-  {
-    id: '1',
-    isbn: '978-0-123456-78-9',
-    title: 'Modern Web Development',
-    subtitle: 'A Comprehensive Guide',
-    rating: 5,
-    bookType: 'HARDCOVER',
-    price: 49.99,
-    discount: 10,
-    available: true,
-    publicationDate: '2024-01-15',
-    homepage: 'https://example.com/modern-web',
-    keywords: ['web development', 'programming', 'javascript'],
-  },
-  {
-    id: '2',
-    isbn: '978-0-987654-32-1',
-    title: 'React Patterns and Best Practices',
-    subtitle: 'Building Scalable Applications',
-    rating: 4,
-    bookType: 'EPUB',
-    price: 29.99,
-    available: true,
-    publicationDate: '2024-02-01',
-  },
-  {
-    id: '3',
-    isbn: '978-0-456789-12-3',
-    title: 'GraphQL in Action',
-    rating: 4,
-    bookType: 'PAPERBACK',
-    price: 39.99,
-    discount: 15,
-    available: false,
-    publicationDate: '2023-11-20',
-  },
-];
+interface GetBookByIdResponse {
+  buch: Book;
+}
 
 const getBookTypeBadgeVariant = (type: BookType) => {
   switch (type) {
@@ -97,7 +79,40 @@ export default function BookDetailsPage() {
   const params = useParams<{ id: string }>();
   const bookId = params.id;
 
-  const book = DUMMY_BOOKS.find((b) => b.id === bookId);
+  const { loading, error, data } = useQuery<GetBookByIdResponse>(
+    GET_BOOK_BY_ID,
+    {
+      variables: { id: bookId },
+    },
+  );
+
+  if (loading) {
+    return (
+      <Container className="py-4 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-4">
+        <Alert variant="danger">
+          Fehler beim Laden des Buchs: {error.message}
+        </Alert>
+        <Link href="/search" className="text-decoration-none">
+          <Button variant="outline-primary">
+            <ArrowLeft className="me-2" />
+            Back to Search
+          </Button>
+        </Link>
+      </Container>
+    );
+  }
+
+  const book: Book | undefined = data?.buch;
 
   if (!book) {
     return (
@@ -116,12 +131,12 @@ export default function BookDetailsPage() {
   }
 
   const finalPrice =
-    book.discount && book.discount > 0
-      ? book.price * (1 - book.discount / 100)
-      : book.price;
+    book.rabatt && book.rabatt > 0
+      ? book.preis * (1 - book.rabatt)
+      : book.preis;
 
-  const formattedDate = book.publicationDate
-    ? new Date(book.publicationDate).toLocaleDateString('de-DE')
+  const formattedDate = book.datum
+    ? new Date(book.datum).toLocaleDateString('de-DE')
     : '-';
 
   return (
@@ -142,14 +157,16 @@ export default function BookDetailsPage() {
               <div className="mb-4">
                 <div className="d-flex align-items-start justify-content-between mb-3">
                   <div>
-                    <h1 className="mb-2">{book.title}</h1>
-                    {book.subtitle && (
-                      <h3 className="text-muted mb-3">{book.subtitle}</h3>
+                    <h1 className="mb-2">{book.titel.titel}</h1>
+                    {book.titel.untertitel && (
+                      <h3 className="text-muted mb-3">
+                        {book.titel.untertitel}
+                      </h3>
                     )}
                   </div>
 
-                  <Badge bg={getBookTypeBadgeVariant(book.bookType)}>
-                    {book.bookType}
+                  <Badge bg={getBookTypeBadgeVariant(book.art)}>
+                    {book.art}
                   </Badge>
                 </div>
 
@@ -183,21 +200,21 @@ export default function BookDetailsPage() {
                     <Card.Body>
                       <h6 className="text-muted mb-2">Price</h6>
                       <div>
-                        {book.discount && book.discount > 0 ? (
+                        {book.rabatt && book.rabatt > 0 ? (
                           <>
                             <span className="text-decoration-line-through text-muted me-2">
-                              €{book.price.toFixed(2)}
+                              €{book.preis.toFixed(2)}
                             </span>
                             <span className="fs-5 fw-bold text-success">
                               €{finalPrice.toFixed(2)}
                             </span>
                             <Badge bg="warning" text="dark" className="ms-2">
-                              {book.discount}% OFF
+                              {(book.rabatt * 100).toFixed(0)}% OFF
                             </Badge>
                           </>
                         ) : (
                           <span className="fs-5 fw-bold">
-                            €{book.price.toFixed(2)}
+                            €{book.preis.toFixed(2)}
                           </span>
                         )}
                       </div>
@@ -210,10 +227,10 @@ export default function BookDetailsPage() {
                     <Card.Body>
                       <h6 className="text-muted mb-2">Availability</h6>
                       <Badge
-                        bg={book.available ? 'success' : 'danger'}
+                        bg={book.lieferbar ? 'success' : 'danger'}
                         className="fs-6"
                       >
-                        {book.available ? 'Available' : 'Not Available'}
+                        {book.lieferbar ? 'Available' : 'Not Available'}
                       </Badge>
                     </Card.Body>
                   </Card>
@@ -237,12 +254,12 @@ export default function BookDetailsPage() {
                 </Card>
               )}
 
-              {book.keywords && book.keywords.length > 0 && (
-                <Card className="bg-light border-0">
+              {book.schlagwoerter && book.schlagwoerter.length > 0 && (
+                <Card className="bg-light border-0 mb-4">
                   <Card.Body>
                     <h6 className="text-muted mb-3">Keywords</h6>
                     <div className="d-flex flex-wrap gap-2">
-                      {book.keywords.map((keyword) => (
+                      {book.schlagwoerter.map((keyword) => (
                         <Badge
                           key={keyword}
                           bg="secondary"
@@ -250,6 +267,24 @@ export default function BookDetailsPage() {
                         >
                           {keyword}
                         </Badge>
+                      ))}
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
+
+              {book.abbildungen && book.abbildungen.length > 0 && (
+                <Card className="bg-light border-0">
+                  <Card.Body>
+                    <h6 className="text-muted mb-3">Images</h6>
+                    <div className="d-flex flex-column gap-2">
+                      {book.abbildungen.map((img, index) => (
+                        <div key={index}>
+                          <strong>{img.beschriftung}</strong>
+                          <span className="text-muted ms-2">
+                            ({img.contentType})
+                          </span>
+                        </div>
                       ))}
                     </div>
                   </Card.Body>
