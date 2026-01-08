@@ -7,3 +7,14 @@ export const CREATE_BOOK = gql`
         }
     }
 `;
+
+export const LOGIN = gql`
+    mutation Login($username: String!, $password: String!) {
+        token(username: $username, password: $password) {
+            access_token
+            expires_in
+            refresh_token
+            refresh_expires_in
+        }
+    }
+`;

@@ -152,7 +152,10 @@ export default function CreateBookPage() {
         abbildungen: abbildungen.length > 0 ? abbildungen : undefined,
       };
 
-      await createBook({ variables: { input } });
+      await createBook({
+        variables: { input },
+        refetchQueries: ['GetBooks'],
+      });
 
       setSuccess(true);
       // Reset
